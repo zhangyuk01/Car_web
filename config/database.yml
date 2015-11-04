@@ -1,0 +1,26 @@
+development:
+  adapter: mysql
+  host: localhost
+  database: car_web_dev
+  username: root
+  password:
+  pool: 5
+  timeout: 5000
+
+test:
+  adapter: mysql
+  host: localhost
+  database: car_web_test
+  username: root
+  password:
+  pool: 5
+  timeout: 5000
+
+production:
+  adapter: mysql
+  host: localhost
+  database: car_web_pro
+  username: root
+  password:
+  pool: 5
+  timeout: 5000
