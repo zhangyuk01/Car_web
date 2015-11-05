@@ -10,6 +10,8 @@ class Interface::UsersController < ActionController::Base
       :id => 1,
       :name => "zhangyu",
       :sex => "nan",
+      :lover => "woman",
+      :aihao => "play"
     }
   end
 
