@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       collection do
         #get :get_friends
         #get :set_friends
+        get :example
         get :all_users
       end
     end
