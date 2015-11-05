@@ -6,7 +6,7 @@ class Interface::UsersController < ActionController::Base
   # 4 一个假接口来 规范数据返回
 
 
-  # 这是一个假接口 来对接口进行规范。
+  # 这是一个假接口 来对接口进行规范。:xx =>
   def example
     render :json => {
       :id => 1,
@@ -15,13 +15,28 @@ class Interface::UsersController < ActionController::Base
     }
   end
 
-
-
-  # 对数据库进行操作的接口
-  def all_users
-    render :json => {
-      :data => User.all
+  # 这是一个假接口 来对接口进行规范 xx:
+  def example2
+    render json: {
+      id: 2,
+      name: "zhangyu",
+      sex: "nan",
     }
+  end
+
+
+
+  # 对数据库进行操作的接口,返回数据库中你想要的那些接口数据
+  # 简单规范
+  def all_users
+    users = User.all.map do |user|{
+        :id => user.id,
+        :name => user.name,
+        :sex => user.sex
+      }
+    end
+
+    render :json => users
   end
 
 
@@ -37,6 +52,7 @@ class Interface::UsersController < ActionController::Base
   #    render :plain => 'you are no friend'
   #  end
   #end
+
 
   ## POST set the current user's friends
   #def set_friends
