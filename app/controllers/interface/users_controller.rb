@@ -1,9 +1,7 @@
 # encoding: utf-8
 class Interface::UsersController < ActionController::Base
-  # 1.选中一块注释的快捷键是",cb"
-  # 2.下面这块是返回方法的演示。
-  # 3.这是一个返回所有用户信息的接口
-  # 4 一个假接口来 规范数据返回
+  # 1.选中一块注释的快捷键是 ",cb"
+  # 2.取消注释的快捷键是 "选中:s/#//" 依次操作
 
 
   # 这是一个假接口 来对接口进行规范。:xx =>
@@ -80,6 +78,31 @@ class Interface::UsersController < ActionController::Base
     render :json => users
   end
 
+  #总结:
+  #  1.    XX:  等价于 :XX =>
+  #  2.    {}   等价于 do end
+  #  3.    each 返回每一个对象
+  #  4.    map  返回数组，内部是hash
+  #                 例子: =====>看右面的图形    [{name:'zhangyu'},{},{},{}]
+  #  5.    [:XX]  是Ruby中的hash 根据key 来选择value
+  #                 例子: =====>user[:name]  params[:id]
+  #  6.    正是因为 有4个等价，所以在写接口的时候会有很多种写法，一定要掌握原理
+
+
+
+
+  # 条件查找 总结
+  # 1. find 条件查找
+  def find_user_by_id
+     user = User.find params[:id]
+     render :json => user
+  end
+
+  # 2. where 条件查找
+  def find_user_by_where
+     user = User.where("name = ?",params[:name]);
+     render :json => user
+  end
 
 
 
