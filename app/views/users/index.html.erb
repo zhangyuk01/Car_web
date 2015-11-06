@@ -1,8 +1,9 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">用户列表</h3>
-  </div>
-<div class="panel-body">
+
+<%#<div class="panel panel-default">            %>
+<%#  <div class="panel-heading">                %>
+<%#    <h3 class="panel-title">用户列表</h3>%>
+<%#  </div>                                     %>
+<%#<div class="panel-body">                     %>
 
 
 
@@ -17,7 +18,7 @@
       <tr>
         <td><%= user.name %></td>
         <td><%= user.sex %></td>
-        <td><%= link_to '显示', user, class: 'btn btn-primary'%></td>
+        <td><%= link_to '显示', user, class: 'btn btn-info'%></td>
         <td><%= link_to '编辑', edit_user_path(user) ,class: 'btn btn-primary'%></td>
         <td><%= link_to '删除', user, method: :delete, data: { confirm: 'Are you sure?' },class: 'btn btn-danger' %></td>
       </tr>
