@@ -107,18 +107,138 @@ class Interface::UsersController < ActionController::Base
   end
 
 
- # 3.登陆和注册接口模拟实现机制
+ # 3.登陆和注册接口模拟实现机制 post 实现机制
   def login
+     user = User.where("name = ")
+
+
+
+
 
   end
 
+
+  #4. 注册实现机制    // get 实现机制 -> 其实是不对的，应该是post请求
   def register
     user = User.new(:name => params[:name], :user_password => params[:user_password])
     if user.save
-      render :plain => 'successed'
+      render :json => user
     else
       render :plain => 'faied'
     end
+  end
+
+
+  # 以下是用户注册和登陆的接口
+  def sign_up
+    user = User.find_by_phone(params[:phone])
+    vcode = ValidationCode.find_by_phone(params[:phone])
+    if user.present?
+      render :json => {:success => false, :message => "该号码已注册"}
+    elsif params[:validate_code] == vcode.code
+      user = User.new(:phone => params[:phone], :password => params[:passwd])
+      user.email = "#{user.phone}@fake.email"
+      user.name = "匿名"
+      user.token = generate_token
+      user.save!
+      render :json => {:success => true, :message => "成功注册", :user => user }
+    else
+      render :json => {:success => false, :message => "验证码不正确"}
+    end
+  end
+
+
+  def get_back_password
+    user = User.find_by_phone(params[:phone])
+    #vcode = (Rails.application.config.validate_code[params[:phone]] == params[:validate_code])
+    vcode = ValidationCode.find_by_phone(params[:phone])
+    #if user && vcode
+    if vcode.code == params[:validate_code]
+      render :json => {:success => true}
+    else
+      render :json => {:success => false}
+    end
+  end
+
+  def sign_in
+    user = User.find_by_phone(params[:phone])
+    if user
+      if user.valid_password?(params[:passwd])
+        user.token = generate_token if user.token.blank? # user.token 和 user.update :token => user.token是不是重复了？
+        user.update(:token => user.token)
+        if user.head_pic
+          user_head_pic = "/uploads/head_pic/#{user.phone}/" + "#{user.head_pic}"
+        else
+          user_head_pic = nil
+        end
+        render json: {:success => true, :result => {:id => user.id, :user_phone => user.phone, :token => user.token, :user_name => user.name, :user_address => user.address, :user_head_pic => SERVER + user_head_pic}}
+      else
+        render json: {:success => false,  :message => '密码错误'}
+      end
+    else
+      render :json => {:success => false, :message => "您还没有注册"}
+    end
+  end
+
+  def change_head_pic # 更换头像
+    user = User.find_by_token(params[:token])
+    img_name = params[:file].original_filename
+    public_root_dir = "/opt/app/yuehouse/current/public"
+    img_dir = "/uploads/head_pic/#{user.phone}/"
+    public_dir = public_root_dir + img_dir
+    # 确保这个文件夹存在
+    `mkdir -p #{public_dir}`
+    img_save_path = File.join(public_dir,img_name)
+    File.open(img_save_path,"wb") {|f| f.write(params[:file].read)}
+    user.update(:head_pic => img_name) # 将图片的名字存在数据库里面
+    render :json => {:success => true, :image_dir => SERVER + img_dir + img_name}
+  end
+
+  def change_password
+    user = User.find_by_token(params[:token])
+    if user && user.valid_password?(params[:old_password])
+      user.password = params[:user_password]
+      user.save
+      render :json => {:success => true}
+    else
+      render :json => {:success => false}
+    end
+  end
+
+  def reset_password
+    user = User.find_by_phone(params[:phone])
+    if user
+      user.password = params[:password]
+      user.save
+      render :json => {:success => true}
+    else
+      render :json => {:success => false}
+    end
+  end
+
+
+  def validate_code # 生成验证码
+    phone = params[:phone]
+    code = params[:validate_code]
+    check = ValidationCode.find_by_phone phone
+    if check.present?
+      check.update(:code => code)
+      render :json => check
+    else
+      validation_code = ValidationCode.new(phone:phone, code:code)
+      if validation_code.save
+        render :json => validation_code
+      else
+        render :json => "生成验证码失败"
+      end
+    end
+  end
+
+  def change_name
+    user = User.find_by_token(params[:token])
+    user.name = params[:name]
+    user.save
+    render :json => {:success => true, :name => user.name}
   end
 
 
