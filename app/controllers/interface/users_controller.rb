@@ -107,6 +107,21 @@ class Interface::UsersController < ActionController::Base
   end
 
 
+ # 3.登陆和注册接口模拟实现机制
+  def login
+
+  end
+
+  def register
+    user = User.new(:name => params[:name], :user_password => params[:user_password])
+    if user.save
+      render :plain => 'successed'
+    else
+      render :plain => 'faied'
+    end
+  end
+
+
 
   # GET get the current user's friends
   #def get_friends

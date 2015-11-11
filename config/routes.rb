@@ -17,6 +17,7 @@ Rails.application.routes.draw do
         get :all_users2
         get :find_user_by_id
         get :find_user_by_where
+        get :register
       end
     end
   end
