@@ -1,9 +1,27 @@
+#这个接口就是简单的一个ruby语言教学，适合新手学习
 # encoding: utf-8
 class Interface::UsersController < ActionController::Base
+  ####[1]-----------技巧篇
   # 1.选中一块注释的快捷键是 ",cb"
   # 2.取消注释的快捷键是 "选中:s/#//" 依次操作
 
 
+
+
+  ####[2]----------Ruby 语言基础篇
+  # 1.  .nil? .empty? .blank? .present? 区别
+  # 2.  .nil? 如果不是对象那么他就是nil的，返回true，(这句话是通过建模来加强理解，下面都是）===>
+  #           例子：nil.nil? => true  false.nil => false
+  #
+  # 3.  .empty? 前提对象是存在，否则用不来.empty , 如果对象是空那么他就是empty的，返回true ====>
+  #           例子："lala".empty? => false "".empty? => true " ".empty? => 有空格就返回false
+  #
+  # 4.  .blank? 同时满足.nil? 和 .empty? 如果是空的，那么就是blank的
+  #
+  # 5.  .present? .blank的反义词，如果对象中不是空的，就是present的
+
+
+  ####[3]----------Ruby On Rails 接口篇
   # 这是一个假接口 来对接口进行规范。:xx =>
   def example
     render :json => {
@@ -107,25 +125,26 @@ class Interface::UsersController < ActionController::Base
   end
 
 
- # 3.登陆和注册接口模拟实现机制 post 实现机制
+ # 3.登陆实现机制，通过用户名登陆
   def login
-     user = User.where("name = ")
-
-
-
-
-
+    user = User.find_by_phone(params[:phone])
   end
 
 
-  #4. 注册实现机制    // get 实现机制 -> 其实是不对的，应该是post请求
+  #4. 注册实现机制,通过手机号注册
   def register
-    user = User.new(:name => params[:name], :user_password => params[:user_password])
-    if user.save
-      render :json => user
-    else
-      render :plain => 'faied'
-    end
+     user =  User.find_by_phone(params[:phone])
+     if user.present?
+       render :json => {
+         :success => false, :message => "该号码已经被注册"
+       }
+     elsif
+       user = User.new(:phone => params[:phone], :user_password => params[:user_password])
+       user.save!
+       render :json => {:success => true, :message => "成功注册", :user => user}
+     else
+       render :json => {:success => false, :message => "注册失败"}
+     end
   end
 
 
